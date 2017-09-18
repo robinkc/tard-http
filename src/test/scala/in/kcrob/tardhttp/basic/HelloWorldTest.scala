@@ -1,6 +1,8 @@
 //:~
 
-package in.kcrob.tardhttp
+package in.kcrob.tardhttp.basic
+
+import in.kcrob.tardhttp.UnitSpec
 
 /**
   * Created by kcrob.in on 15/07/17.

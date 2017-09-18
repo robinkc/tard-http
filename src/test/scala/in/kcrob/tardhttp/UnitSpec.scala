@@ -1,5 +1,6 @@
 package in.kcrob.tardhttp
 
+import in.kcrob.scalacommon.Logging
 import org.scalatest._
 
 /**
@@ -11,3 +12,5 @@ abstract class UnitSpec
     with OptionValues
     with Inside
     with Inspectors
+    with BeforeAndAfter
+    with Logging
