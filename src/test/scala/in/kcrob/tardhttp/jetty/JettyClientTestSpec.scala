@@ -8,7 +8,7 @@ import org.eclipse.jetty.util.ssl.SslContextFactory
 /**
   * Created by kcrob.in on 15/09/17.
   */
-class JettyTestSpec extends UnitSpec{
+class JettyClientTestSpec extends UnitSpec{
   var httpClient: HttpClient = _
 
   before {

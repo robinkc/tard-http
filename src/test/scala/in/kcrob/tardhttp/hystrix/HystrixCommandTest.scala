@@ -1,7 +1,7 @@
 package in.kcrob.tardhttp.hystrix
 
 import in.kcrob.tardhttp.UnitSpec
-import in.kcrob.tardhttp.basic.{HelloWorldCommand, HelloWorldObservableCommand}
+import in.kcrob.tardhttp.basic.{HelloWorldCommand, HelloWorldCommandWithDisabledTimeout, HelloWorldCommandWithTimeout, HelloWorldObservableCommand}
 import rx.lang.scala
 import rx.lang.scala.JavaConversions._
 import rx.lang.scala.Observable
@@ -12,6 +12,16 @@ class HystrixCommandTest extends UnitSpec{
   describe ("HelloWorld") {
     it("should print hello world") {
       val result = new HelloWorldCommand("world").execute()
+      result shouldBe "Hello world!"
+    }
+
+    it("throws fallsback with timeout") {
+      val result = new HelloWorldCommandWithTimeout("world").execute()
+      result shouldBe "Sorry world!"
+    }
+
+    it("continues executing even after timeout if it has been disabled") {
+      val result = new HelloWorldCommandWithDisabledTimeout("world").execute()
       result shouldBe "Hello world!"
     }
 
@@ -58,7 +68,8 @@ class HystrixCommandTest extends UnitSpec{
     }
 
     it("Should circuit break") {
-      val commands: Seq[Observable[String]] = List.range(1, 3000).map(i => {
+      //This test is to be ignored, we need to write a test with circuitBreakerForceOpen = true
+      val commands: Seq[Observable[String]] = List.range(1, 30).map(i => {
         val command: Observable[String] = new HelloWorldObservableCommand("DIE", i).toObservable()
         command
       })

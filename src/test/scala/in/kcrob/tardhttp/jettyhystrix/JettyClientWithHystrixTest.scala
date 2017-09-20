@@ -2,7 +2,7 @@ package in.kcrob.tardhttp.jettyhystrix
 
 import java.util.concurrent.CountDownLatch
 
-import in.kcrob.tardhttp.jetty.JettyTestSpec
+import in.kcrob.tardhttp.jetty.JettyClientTestSpec
 import rx.lang.scala
 import rx.lang.scala.JavaConversions._
 
@@ -10,11 +10,13 @@ import rx.lang.scala.JavaConversions._
   * Created by kcrob.in on 15/09/17.
   */
 class JettyClientWithHystrixTest
-  extends JettyTestSpec{
+  extends JettyClientTestSpec{
 
   describe("Jetty and Hystrix together") {
     it("Should work fine for multiple calls") {
-      val latch = new CountDownLatch(2)
+      val n = 2
+
+      val latch = new CountDownLatch(n)
       var response1: String = ""
       var response2: String = ""
 
@@ -46,6 +48,7 @@ class JettyClientWithHystrixTest
         }
       )
 
+      //TODO::Catch Exception and abort all requests.
       latch.await()
 
       response1 shouldBe "Cool story, bro. - robin"

@@ -10,7 +10,7 @@ import org.eclipse.jetty.client.util.BufferingResponseListener
   */
 
 class JettyClientTest
-  extends JettyTestSpec{
+  extends JettyClientTestSpec{
   describe ("Jetty Http Client should work ok") {
     it("in sync mode") {
 

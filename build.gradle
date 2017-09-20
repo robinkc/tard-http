@@ -44,4 +44,11 @@ dependencies {
     //Jetty http client
     compile group: 'org.eclipse.jetty', name: 'jetty-client', version: '9.4.6.v20170531'
 
+    //IO Commons, currently used only in unit test
+    compile group: 'commons-io', name: 'commons-io', version: '2.5'
+
+    //Jetty http server for unit test
+    testCompile group: 'org.eclipse.jetty', name: 'jetty-server', version: '9.4.6.v20170531'
+
+
 }
