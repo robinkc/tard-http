@@ -54,13 +54,21 @@ TODOs
         1. Ref - https://github.com/Netflix/Hystrix/wiki/FAQ%20:%20Operational
 6. Done:: How to unit test
     1. Run tests in parallel - http://mrhaki.blogspot.in/2010/11/gradle-goodness-running-tests-in.html
-7. TODO:: Confirm how many threads Jetty is using
-7. TODO:: Concurrency Limit - At any given moment there shall not be more than 100 requests pending on a destination.
+7. Done:: Confirm how many threads Jetty is using
+    1. Like this - https://stackoverflow.com/questions/44731317/how-does-jetty-httpclient-use-threads
+7. Done:: Concurrency Limit - At any given moment there shall not be more than 100 requests pending on a destination.
     1. It is not a rate limit - You can not say 100 per second.
     2. We need to test in terms of HystrixObservable how does semaphore isolation work, because one observable can return multiple results.
         So, possibly, Hystrix might limit number of non-complete observables.
+        .withExecutionIsolationSemaphoreMaxConcurrentRequests works and sets the concurrency to that. It works on commandKey. Please check HystrixCommandTest."semaphore isolation with maximum number of requests"
     3. We should also check if HttpClient.setMaxRequestsQueuedPerDestination's overhead can be completely ignored.
-7. TODO:: Benchmark and say it is better or worse to use non-blocking io
+        By default -     private volatile int maxConnectionsPerDestination = 64;
+                         private volatile int maxRequestsQueuedPerDestination = 1024;
+        maxRequestsQueuedPerDestination is the size of the blocking queue, so, we can not avoid it's performance penalty, if any.
+        maxConnectionsPerDestination is the size of PoolingDuplexConnection, we can not avoid it's performance penalty, if any 
+
+7. TODO:: How to pass multiple responses back to the caller thread
+8. TODO:: Benchmark and say it is better or worse to use non-blocking io
 8. TODO:: Http2 transport
     1. Connection Pools
     2. How many requests over one connection?

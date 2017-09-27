@@ -1,7 +1,9 @@
-package in.kcrob.tardhttp.basic
+package in.kcrob.tardhttp
+
+import java.util.UUID
 
 import com.netflix.hystrix.HystrixCommand.Setter
-import com.netflix.hystrix.{HystrixCommand, HystrixCommandGroupKey, HystrixCommandProperties, HystrixObservableCommand}
+import com.netflix.hystrix._
 import in.kcrob.scalacommon.Logging
 import org.slf4j.LoggerFactory
 import rx.{Observable, Subscriber}
@@ -58,6 +60,8 @@ class HelloWorldCommandWithDisabledTimeout(name: String)
   override def getFallback: String = "Sorry " + name + "!"
 }
 
+
+
 class HelloWorldObservableCommand(val name: String, index: Int) extends HystrixObservableCommand[String] (
   HystrixObservableCommand.Setter
     .withGroupKey(HystrixCommandGroupKey.Factory.asKey("ExampleGroup"))
@@ -91,6 +95,32 @@ class HelloWorldObservableCommand(val name: String, index: Int) extends HystrixO
     })
   }
 
+  override def resumeWithFallback(): Observable[String] = {
+    Observable.just(s"@${index} Hello from the Night King")
+  }
+}
+
+class HelloWorldObservableCommandSingleConcurrency(val name: String, index: Int) extends HystrixObservableCommand[String] (
+  HystrixObservableCommand.Setter
+    .withGroupKey(HystrixCommandGroupKey.Factory.asKey(UUID.randomUUID().toString))
+      .andCommandKey(HystrixCommandKey.Factory.asKey(name))
+    .andCommandPropertiesDefaults(
+      HystrixCommandProperties
+        .Setter()
+        .withExecutionTimeoutEnabled(false)
+        .withExecutionIsolationSemaphoreMaxConcurrentRequests(1)
+    )
+) {
+  private val LOG = LoggerFactory.getLogger(getClass)
+  override def construct(): Observable[String] = {
+    Observable.create(new Observable.OnSubscribe[String] {
+      override def call(t: Subscriber[_ >: String]): Unit = {
+        Thread.sleep(100)
+        t.onNext(s"@${index} Hello $name! observed after sleeping for 100 ms")
+        t.onCompleted()
+      }
+    })
+  }
   override def resumeWithFallback(): Observable[String] = {
     Observable.just(s"@${index} Hello from the Night King")
   }

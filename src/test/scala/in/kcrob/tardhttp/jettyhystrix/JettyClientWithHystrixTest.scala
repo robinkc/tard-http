@@ -2,6 +2,7 @@ package in.kcrob.tardhttp.jettyhystrix
 
 import java.util.concurrent.CountDownLatch
 
+import in.kcrob.tardhttp.HttpHystrixObservableCommand
 import in.kcrob.tardhttp.jetty.JettyClientTestSpec
 import rx.lang.scala
 import rx.lang.scala.JavaConversions._

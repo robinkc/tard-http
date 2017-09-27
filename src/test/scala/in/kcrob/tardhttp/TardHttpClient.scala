@@ -2,7 +2,6 @@ package in.kcrob.tardhttp
 
 import java.lang
 
-import in.kcrob.tardhttp.jettyhystrix.HttpHystrixCommandContentResponse
 import org.eclipse.jetty.client.api.{Request, Response}
 import rx.functions.{Func1, FuncN}
 import rx.lang.scala

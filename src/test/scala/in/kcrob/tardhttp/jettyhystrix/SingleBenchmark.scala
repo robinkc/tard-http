@@ -2,7 +2,7 @@ package in.kcrob.tardhttp.jettyhystrix
 
 import java.util.concurrent.CountDownLatch
 
-import in.kcrob.tardhttp.{TardHttpClient, UnitSpec}
+import in.kcrob.tardhttp._
 import org.eclipse.jetty.client.HttpClient
 import org.eclipse.jetty.client.api.{Request, Response}
 import org.eclipse.jetty.util.ssl.SslContextFactory

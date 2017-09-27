@@ -1,21 +1,17 @@
-/**
-  * Created by kcrob.in on 14/08/17.
-  */
-
-package in.kcrob.tardhttp.jettyhystrix
+package in.kcrob.tardhttp
 
 import com.netflix.hystrix.HystrixCommand.Setter
 import com.netflix.hystrix.{HystrixCommand, HystrixCommandGroupKey, HystrixCommandProperties, HystrixObservableCommand}
 import in.kcrob.scalacommon.Logging
-import org.eclipse.jetty.client.api.{Request, Response, Result}
+import org.eclipse.jetty.client.api.{ContentResponse, Request, Result}
 import org.eclipse.jetty.client.util.BufferingResponseListener
 import rx.{Observable, Subscriber}
 
 /**
   * Created by kcrob.in on 14/08/17.
   */
-class HttpHystrixCommandContentResponse (val req: Request)
-  extends HystrixCommand[Response](
+class HttpHystrixCommand (val req: Request)
+  extends HystrixCommand[String](
     Setter
       .withGroupKey(HystrixCommandGroupKey.Factory.asKey("ExampleGroup"))
       .andCommandPropertiesDefaults(
@@ -24,14 +20,15 @@ class HttpHystrixCommandContentResponse (val req: Request)
           .withExecutionTimeoutInMilliseconds(5000)
       )
   )
-    with Logging {
-  override def run(): Response = {
-    req.send()
+  with Logging {
+  override def run(): String = {
+    val contentResponse: ContentResponse = req.send()
+    contentResponse.getContentAsString //Running in Hsytrix Thread
   }
 }
 
-class HttpHsytrixObservableCommandContentResponse (val req: Request)
-  extends HystrixObservableCommand[Response] (
+class HttpHystrixObservableCommand (val req: Request)
+  extends HystrixObservableCommand[String] (
     HystrixObservableCommand.Setter
       .withGroupKey(HystrixCommandGroupKey.Factory.asKey("ExampleGroup"))
       .andCommandPropertiesDefaults(
@@ -40,12 +37,12 @@ class HttpHsytrixObservableCommandContentResponse (val req: Request)
           .withExecutionTimeoutInMilliseconds(5000)
       )
   )
-    with Logging {
+  with Logging {
 
-  override def construct(): Observable[Response] = {
-    Observable.create(new Observable.OnSubscribe[Response] {
+  override def construct(): Observable[String] = {
+    Observable.create(new Observable.OnSubscribe[String] {
 
-      override def call(t: Subscriber[_ >: Response]): Unit = {
+      override def call(t: Subscriber[_ >: String]): Unit = {
         req.send(new BufferingResponseListener() {
           override def onComplete(result: Result): Unit = {
             if(result.isFailed) {
@@ -54,7 +51,7 @@ class HttpHsytrixObservableCommandContentResponse (val req: Request)
             }
             else {
               LOG.debug("Calling onNext")
-              t.onNext(result.getResponse) //Running in Jetty Thread
+              t.onNext(getContentAsString) //Running in Jetty Thread
               LOG.debug("Calling onCompleted")
               t.onCompleted()
             }
