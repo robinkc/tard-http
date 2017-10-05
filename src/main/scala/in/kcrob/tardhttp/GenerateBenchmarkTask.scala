@@ -20,8 +20,17 @@ object GenerateBenchmarkTask extends App{
 class Abc {
   println("Starting..")
 
-  val index = new File("src/main/java/in/kcrob/tardhttp/jmh/generated")
-  val entries: Array[String] = index.list
+  private val generatedDestination = "src/main/scala"
+
+  println("Deleting previous setup..")
+
+  val index = new File(generatedDestination + "/in/kcrob/tardhttp/jmh/generated")
+  val entries: Array[String] = if(index.list == null ){
+    Array()
+  }
+  else{
+    index.list
+  }
   for (s <- entries) {
     val currentFile = new File(index.getPath, s)
     currentFile.delete()
@@ -29,9 +38,7 @@ class Abc {
 
   new File("src/main/resources/META-INF/BenchmarkList").delete()
 
-
-  val ocl = Thread.currentThread().getContextClassLoader
-  JmhBytecodeGenerator.main(Array("out/production/classes", "src/main/java", "src/main/resources"))
+  JmhBytecodeGenerator.main(Array("out/production/classes", generatedDestination, "src/main/resources"))
 
 //  Main.main(Array("-jvmArgsAppend", "-cp /Users/robinchugh/IdeaProjects/tard-http/out/production/classes"))
 //  Main.main(Array("-h"))

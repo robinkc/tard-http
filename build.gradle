@@ -9,13 +9,13 @@ sourceCompatibility = 1.8
 
 buildscript {
     repositories {
-//        jcenter()
+        jcenter()
         maven {
             url "https://plugins.gradle.org/m2/"
         }
     }
     dependencies {
-        classpath "eu.appsatori:gradle-fatjar-plugin:0.3"
+        classpath "com.github.jengelman.gradle.plugins:shadow:2.0.1"
     }
 }
 
@@ -23,7 +23,10 @@ repositories {
     mavenCentral()
 }
 
-apply plugin: "eu.appsatori.fatjar"
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'application'
+
+mainClassName = 'in.kcrob.tardhttp.RunBenchmarkTask'
 
 dependencies {
     compile group: 'org.scala-lang', name: 'scala-library', version: '2.11.11'
@@ -52,8 +55,13 @@ dependencies {
     compile group: 'org.openjdk.jmh', name: 'jmh-generator-annprocess', version: '1.19'
     compile group: 'org.openjdk.jmh', name: 'jmh-generator-bytecode', version: '1.19'
 
+    //TODO::Remove it after benchmarks
+    compile 'org.apache.httpcomponents:httpclient:4.5.3'
+
+    //TODO::Remove it after benchmarks
+    compile group: 'org.asynchttpclient', name: 'async-http-client', version: '2.0.37'
+
     //TODO:: Make it testCompile after benchmark Jetty http server for unit test
     compile group: 'org.eclipse.jetty', name: 'jetty-server', version: '9.4.6.v20170531'
-
 
 }

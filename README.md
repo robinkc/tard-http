@@ -67,7 +67,9 @@ TODOs
         maxRequestsQueuedPerDestination is the size of the blocking queue, so, we can not avoid it's performance penalty, if any.
         maxConnectionsPerDestination is the size of PoolingDuplexConnection, we can not avoid it's performance penalty, if any 
 
-7. TODO:: How to pass multiple responses back to the caller thread
+7. Done:: How to pass multiple responses back to the caller thread
+    1. we might use a volatile array with HttpResponse being a case class - https://stackoverflow.com/questions/24033787/safe-publication-of-array-of-objects-through-a-volatile-reference?noredirect=1&lq=1
+    2. we might use a ConcurrentHashMap
 8. TODO:: Benchmark and say it is better or worse to use non-blocking io
 8. TODO:: Http2 transport
     1. Connection Pools
