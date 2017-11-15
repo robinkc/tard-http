@@ -1,0 +1,67 @@
+group 'com.cleartrip.clearhttp'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'scala'
+apply from : '../common.gradle'
+
+sourceCompatibility = 1.8
+
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "com.github.jengelman.gradle.plugins:shadow:2.0.1"
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'application'
+
+mainClassName = 'in.kcrob.tardhttp.RunBenchmarkTask'
+
+dependencies {
+    compile group: 'org.scala-lang', name: 'scala-library', version: '2.11.11'
+    testCompile group: 'org.scalatest', name: 'scalatest_2.11', version: '2.2.2'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    //Log4J2
+    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.8.2'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.8.2'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.8.2'
+
+    //Hystrix
+    compile group: 'com.netflix.hystrix', name: 'hystrix-core', version: '1.5.12'
+
+    //RxScala
+    compile group: 'io.reactivex', name: scalaName('rxscala'), version: '0.26.3'
+
+    //Jetty http client
+    compile group: 'org.eclipse.jetty', name: 'jetty-client', version: '9.4.6.v20170531'
+
+    //IO Commons, currently used only in unit test
+    compile group: 'commons-io', name: 'commons-io', version: '2.5'
+
+    //TODO::Remove in.kcrob.tardhttp.jmh after benchmarks
+    compile group: 'org.openjdk.jmh', name: 'jmh-core', version: '1.19'
+    compile group: 'org.openjdk.jmh', name: 'jmh-generator-annprocess', version: '1.19'
+    compile group: 'org.openjdk.jmh', name: 'jmh-generator-bytecode', version: '1.19'
+
+    //TODO::Remove it after benchmarks
+    compile 'org.apache.httpcomponents:httpclient:4.5.3'
+
+    //TODO::Remove it after benchmarks
+    compile group: 'org.asynchttpclient', name: 'async-http-client', version: '2.0.37'
+
+    //TODO:: Make it testCompile after benchmark Jetty http server for unit test
+    compile group: 'org.eclipse.jetty', name: 'jetty-server', version: '9.4.6.v20170531'
+
+}

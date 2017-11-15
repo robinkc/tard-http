@@ -19,7 +19,7 @@ class HttpHystrixCommand(val req: Request, val timeout: Int, val concurrency: In
   extends {
   } with HystrixCommand[String](
     Setter
-      .withGroupKey(HystrixCommandGroupKey.Factory.asKey("ExampleGroup"))
+      .withGroupKey(HystrixCommandGroupKey.Factory.asKey("HttpHystrixCommand"))
       .andCommandPropertiesDefaults(
         HystrixCommandProperties
           .Setter()
@@ -37,13 +37,13 @@ class HttpHystrixCommand(val req: Request, val timeout: Int, val concurrency: In
 class HttpHystrixCommandForHttpComponents(val httpComponentsHttpClient: CloseableHttpClient, val httpComponentsRequest: HttpGet, val timeout: Int, val concurrency: Int )
   extends HystrixCommand[String](
     Setter
-      .withGroupKey(HystrixCommandGroupKey.Factory.asKey("ExampleGroup"))
+      .withGroupKey(HystrixCommandGroupKey.Factory.asKey("HttpHystrixCommandForHttpComponents"))
       .andCommandPropertiesDefaults(
         HystrixCommandProperties
           .Setter()
           .withExecutionTimeoutInMilliseconds(timeout)
           .withCircuitBreakerEnabled(false)
-      ).andThreadPoolPropertiesDefaults(HystrixThreadPoolProperties.Setter().withCoreSize(concurrency * 2))
+      ).andThreadPoolPropertiesDefaults(HystrixThreadPoolProperties.Setter().withCoreSize(concurrency * 2).withMaximumSize(concurrency * 2).withMaxQueueSize(0))
   )
     with Logging {
   override def run(): String = {
@@ -62,7 +62,7 @@ class HttpHystrixCommandForHttpComponents(val httpComponentsHttpClient: Closeabl
 class HttpHystrixObservableCommand(val req: Request, val timeout: Int, val concurrency: Int )
   extends HystrixObservableCommand[String](
     HystrixObservableCommand.Setter
-      .withGroupKey(HystrixCommandGroupKey.Factory.asKey("ExampleGroup"))
+      .withGroupKey(HystrixCommandGroupKey.Factory.asKey("HttpHystrixObservableCommand" + getClass.getSimpleName))
       .andCommandPropertiesDefaults(
         HystrixCommandProperties
           .Setter()
@@ -83,8 +83,13 @@ class HttpHystrixObservableCommand(val req: Request, val timeout: Int, val concu
               t.onError(result.getFailure)
             }
             else {
-              t.onNext(getContentAsString) //Running in Jetty Thread
-              t.onCompleted()
+              try{
+                t.onNext(getContentAsString) //Running in Jetty Thread
+                t.onCompleted()
+              }
+              catch {
+                case e: Throwable => t.onError(e)
+              }
             }
           }
         })

@@ -13,10 +13,13 @@ object MyBenchmarkSanity
 
 class MyBenchmarkSanity0
   extends Logging{
-  private val tardHttpBenchmark = new TardHttpBenchmark()
-  tardHttpBenchmark.benchTardHttpClientWithConcurrentHashMap()
-  tardHttpBenchmark.benchHttpComponentsHttpClient()
-  tardHttpBenchmark.tearDown()
+  private val jettyClientBenchmark = new JettyClientBenchmark
+  jettyClientBenchmark.benchJettyClient()
+  jettyClientBenchmark.tearDown()
+
+  private val httpComponentsBenchmark = new HttpComponentsBenchmark
+  httpComponentsBenchmark.benchHystrixBlockingCommandHttpComponents()
+  httpComponentsBenchmark.tearDown()
 
   LOG.info("We are done")
 }

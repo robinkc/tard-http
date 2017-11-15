@@ -42,7 +42,7 @@ class EmbeddedJettyServer(handler: Handler) extends Logging{
 //Inspired by http://git.eclipse.org/c/jetty/org.eclipse.jetty.project.git/tree/jetty-client/src/test/java/org/eclipse/jetty/client/RespondThenConsumeHandler.java
 class RequestHandler extends AbstractHandler {
   override def handle(target: String, baseRequest: Request, request: HttpServletRequest, response: HttpServletResponse): Unit = {
-    val x = target match {
+    target match {
       case "/hello" =>
         baseRequest.setHandled(true)
         response.setStatus(200)
